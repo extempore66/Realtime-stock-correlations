@@ -1,2 +1,0 @@
-sudo pkill -f dsapp.js
-nohup sudo node dsapp.js & 

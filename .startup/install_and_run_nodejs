@@ -23,7 +23,18 @@ if ! [ -x "$(command -v npm)" ] && ! [ -x "$(command -v node)" ] ; then
 export NODEJS_HOME=/usr/local/lib/nodejs/node-v"${NODE_VERSION}"/bin
 export PATH=\$NODEJS_HOME:\$PATH
 EOF
-  . ~/.profile
+  source ~/.profile
   node -v
   npm version
+fi
+
+npm install
+
+sudo pkill -f dsapp.js
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  nohup sudo node dsapp.js node0 &
+fi
+if [[ "$OSTYPE" != "darwin"* ]]; then
+  nohup sudo node dsapp.js localhost &
 fi
