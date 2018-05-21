@@ -1,9 +1,8 @@
 ---
-title: Asset Name
+title: Correlations
 type: index
 weight: 10
 ---
 
-Asset Name
+Real time Stock Correlations
 ===================
-
