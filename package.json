@@ -1,0 +1,20 @@
+{
+  "name": "ds_app",
+  "version": "1.0.0",
+  "description": "Realtime stocks correlations",
+  "main": "ds_app.js",
+  "dependencies": {
+    "async": "^2.6.0",
+    "cluster": "^0.7.7",
+    "dse-driver": "^1.5.1",
+    "express": "^4.16.3",
+    "os": "^0.1.1",
+    "socket.io": "^2.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bogdan Udubasa",
+  "license": "ISC"
+}

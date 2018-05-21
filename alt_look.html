@@ -1,0 +1,507 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Realtime Correlations</title>
+		<link rel="stylesheet" href="./style.css" type="text/css">
+
+		<script src="./amcharts/amcharts.js" type="text/javascript"></script>
+		<script src="./amcharts/serial.js" type="text/javascript"></script>
+		<script src="./amcharts/amstock.js" type="text/javascript"></script>
+		
+        <script src="/socket.io/socket.io.js" type="text/javascript"></script>
+		<script>
+            var chartData = [];
+            var stock_1_100day_price = [];
+            var stock_2_100day_price = [];
+
+            var chart = AmCharts.makeChart("chartdiv", {
+				type: "stock",
+				dataDateFormat: "YYYY-MM-DD",
+
+				dataSets: [{
+
+                    fieldMappings: [
+					{
+						fromField: "value_1",
+						toField: "value"
+					}, 
+					{
+						fromField: "corr_10",
+						toField: "corr_10"
+					}, 
+					{
+						fromField: "corr_50",
+						toField: "corr_50"
+					}, 
+					{
+						fromField: "corr_100",
+						toField: "corr_100"
+					}
+					],
+					color: "#7f8da9",
+					dataProvider: chartData,
+					title: "West Stock",
+					categoryField: "date"
+
+
+				}, {
+
+					fieldMappings: [{
+						fromField: "value_2",
+						toField: "value_2"
+					}
+					],
+					color: "#fac314",
+					dataProvider: chartData,
+					compared: true,
+					title: "East Stock",
+					categoryField: "date"
+                    
+				}],
+
+
+				panels: [{
+                        title: "Stock 1:",
+                        recalculateToPercents: "never",
+						showCategoryAxis: false,
+						percentHeight: 23,
+						valueAxes: [{
+							id:"v1",
+							dashLength: 3
+						}],
+
+						categoryAxis: {
+							dashLength: 3
+						},
+
+						categoryAxesSettings: {
+							minPeriod: "DD"
+						},
+
+						stockGraphs: [{
+							type: "line",
+							id: "g1",
+							valueField: "value",
+							lineColor: "#E74C3C",
+							useDataSetColors: false,
+							//comparable: true,
+							//compareField: "value",
+							showBalloon: false
+							//showBalloon: true,
+							//balloon: {fixedPosition: true}
+						}],
+
+						stockLegend: {
+							valueTextRegular: undefined,
+							//periodValueTextComparing: "[[percents.value.close]]%"
+							periodValueTextComparing: "[[value.close]]"
+						}
+					},
+					{
+                        title: "Stock 2:",
+                        recalculateToPercents: "never",
+						showCategoryAxis: false,
+						percentHeight: 23,
+						valueAxes: [{
+							id:"v2",
+							dashLength: 3
+						}],
+
+						categoryAxis: {
+							dashLength: 3
+						},
+
+						categoryAxesSettings: {
+							minPeriod: "DD"
+						},
+
+						stockGraphs: [{
+							type: "line",
+							id: "g2",
+							valueField: "value_2",
+							lineColor: "#E74C3C",
+							useDataSetColors: false,
+							comparable: true,
+							//compareField: "value_2",
+							showBalloon: false
+							//showBalloon: true,
+							//balloon: {fixedPosition: true}
+						}],
+
+						stockLegend: {
+							valueTextRegular: undefined,
+							//periodValueTextComparing: "[[percents.value.close]]%"
+							periodValueTextComparing: "[[value.close]]"
+						}
+					}
+					,
+					{
+
+                        title: "Correlation 10 days",
+						percentHeight: 18,
+						marginTop: 1,
+						showCategoryAxis: true,
+						valueAxes: [{
+							id:"v2",
+							dashLength: 3
+						}],
+
+						categoryAxis: {
+							dashLength: 3
+						},
+						categoryAxesSettings: {
+							minPeriod: "DD"
+						},
+						stockGraphs: [{
+							valueField: "corr_10",
+							type: "line",
+							showBalloon: false
+						}],
+
+						stockLegend: {
+							markerType: "none",
+							markerSize: 0,
+							labelText: "",
+							periodValueTextRegular: "[[value.close]]"
+						}
+						
+					}
+					,
+					{
+                        title: "Correlation 50 days",
+						percentHeight: 18,
+						marginTop: 1,
+						showCategoryAxis: true,
+						valueAxes: [{
+							id:"v2",
+							dashLength: 3
+						}],
+
+						categoryAxis: {
+							dashLength: 3
+						},
+						categoryAxesSettings: {
+							minPeriod: "DD"
+						},
+						stockGraphs: [{
+							valueField: "corr_50",
+							type: "line",
+							showBalloon: false
+						}],
+
+						stockLegend: {
+							markerType: "none",
+							markerSize: 0,
+							labelText: "",
+							periodValueTextRegular: "[[value.close]]"
+						}
+						
+					}
+					,
+					{
+
+                        title: "Correlation 100 days",
+						percentHeight: 18,
+						marginTop: 1,
+						showCategoryAxis: true,
+						valueAxes: [{
+							id:"v2",
+							dashLength: 3
+						}],
+
+						categoryAxis: {
+							dashLength: 3
+						},
+						categoryAxesSettings: {
+							minPeriod: "DD"
+						},
+						stockGraphs: [{
+							valueField: "corr_100",
+							type: "line",
+							showBalloon: false
+						}],
+
+						stockLegend: {
+							markerType: "none",
+							markerSize: 0,
+							labelText: "",
+							periodValueTextRegular: "[[value.close]]"
+						}
+						
+					}
+				],
+
+				chartCursorSettings: {
+					valueLineEnabled:true,
+					valueLineBalloonEnabled:true
+				},
+
+
+				chartScrollbarSettings: {
+					graph: "g1",
+					graphType: "line",
+					usePeriod: "WW"
+				},
+
+				periodSelector: {
+					position: "left",
+					periods: [{
+						period: "DD",
+						count: 10,
+						label: "10 days"
+					}, {
+						period: "MM",
+						selected: true,
+						count: 1,
+						label: "1 month"
+					}, {
+						period: "YYYY",
+						count: 1,
+						label: "1 year"
+					}, {
+						period: "YTD",
+						label: "YTD"
+					}, {
+						period: "MAX",
+						label: "MAX"
+					}]
+				}
+
+            });
+
+            const clientSocket = io( {transports: ['websocket']}); // if you don't do the transport it connects but the handshake does not happen on the server
+
+	        clientSocket.on('connect', function() {	
+		       document.getElementById('lowerdiv_1').innerHTML = 'Client socket.io connected ...';
+	        });
+	
+	        clientSocket.on('disconnect', function() {
+		       document.getElementById('lowerdiv_1').innerHTML = 'Client socket.io disconnected ...';
+	        });
+	
+	        clientSocket.on('close', function() {
+		       document.getElementById('lowerdiv_1').innerHTML = 'Client socket.io disconnected ...';
+	        });
+
+	        clientSocket.on('connection_ack', function(data) {
+	           //console.log('connection_ack');
+		       var stockPairSelector = document.getElementById('stockPairSelectorId');
+		       const stockPairsArray = data.allCorrelatedPairs;
+		       stockPairSelector.options.length = 0;
+		       for (const idx in stockPairsArray) {
+                  stockPairSelector.options[stockPairSelector.options.length] = new Option( stockPairsArray[idx], idx);
+		       }
+
+               chartData = data.chartData;
+               
+               var objArr_99 = chartData.slice(-99);
+               for (var i = objArr_99.length - 1; i > -1; i--){
+                  stock_1_100day_price[i] = objArr_99[i].value_1;
+                  stock_2_100day_price[i] = objArr_99[i].value_2;
+		       }
+
+               for (const idx in chart.dataSets ){
+                 //console.log('chart.dataSets[' + idx + '] ===> ' + JSON.stringify(chart.dataSets[idx]) );
+                 chart.dataSets[idx].dataProvider = chartData;
+                 chart.dataSets[idx].title = stockPairsArray[0].split('|')[idx];
+               }
+               	  
+               chart.validateData();
+	        });
+
+            clientSocket.on('realtime_prices', function(data) {
+		       const stockPairSelector = document.getElementById('stockPairSelectorId');
+		       const stockPair = stockPairSelector.options[stockPairSelector.selectedIndex].text.split('|'); // array of two stocks
+		       var stock_1_value_div = document.getElementById('stock_1_value_div');
+		       var stock_2_value_div = document.getElementById('stock_2_value_div');
+		       
+		       //data.allStockPricesObj[ stockPair[0] ] will be in the format "stock_value|stock_change"
+		       stock_1_value_div.innerHTML = stockPair[0] + ': ' + data.allStockPricesObj[stockPair[0]].split('|')[0] + 
+		        ' (' + data.allStockPricesObj[stockPair[0]].split('|')[1] + ')';
+		       stock_2_value_div.innerHTML = stockPair[1] + ': ' + data.allStockPricesObj[stockPair[1]].split('|')[0] + 
+		         ' (' + data.allStockPricesObj[stockPair[1]].split('|')[1] + ')';
+
+		       // good place to calculate realtime correlations and display them
+		       // first push the current (realtime) last price to the stock_1_100day_price arrays - at the end
+		       stock_1_100day_price.push(data.allStockPricesObj[stockPair[0]].split('|')[0]);
+		       stock_2_100day_price.push(data.allStockPricesObj[stockPair[1]].split('|')[0]);
+
+               const corr_100_val = pearsonCorr(stock_1_100day_price, stock_2_100day_price);
+               var corr_100_value_div = document.getElementById('corr_100_value_div');
+               corr_100_value_div.innerHTML = corr_100_val;
+
+               const corr_50_val = pearsonCorr( stock_1_100day_price.slice(-50), stock_2_100day_price.slice(-50) );
+               var corr_50_value_div = document.getElementById('corr_50_value_div');
+               corr_50_value_div.innerHTML = corr_50_val;
+
+               const corr_10_val = pearsonCorr( stock_1_100day_price.slice(-10), stock_2_100day_price.slice(-10) );
+               var corr_10_value_div = document.getElementById('corr_10_value_div');
+               corr_10_value_div.innerHTML = corr_10_val;
+
+               var djSpan = document.getElementById('dj');
+               var nsdqSpan = document.getElementById('nsdq');
+               var s_pSpan = document.getElementById('s_p');
+               djSpan.innerHTML = data.allStockPricesObj['^DJI'].split("|")[0] + ' (' + data.allStockPricesObj['^DJI'].split('|')[1] + ')';
+               nsdqSpan.innerHTML = data.allStockPricesObj['^IXIC'].split("|")[0] + ' (' + data.allStockPricesObj['^IXIC'].split('|')[1] + ')';
+               s_pSpan.innerHTML = data.allStockPricesObj['^GSPC'].split("|")[0] + ' (' + data.allStockPricesObj['^GSPC'].split('|')[1] + ')';
+
+               if ( parseInt(data.allStockPricesObj['^DJI'].split('|')[1]) >= 0 ){
+                  djSpan.style.color = '#00cc00';
+               }
+               else {
+               	  djSpan.style.color = '#ff3300';
+               }
+               if ( parseInt(data.allStockPricesObj['^IXIC'].split('|')[1]) >= 0 ){
+                  nsdqSpan.style.color = '#00cc00';
+               }
+               else {
+               	  nsdqSpan.style.color = '#ff3300';
+               }
+               if ( parseInt(data.allStockPricesObj['^GSPC'].split('|')[1]) >= 0 ){
+                  s_pSpan.style.color = '#00cc00';
+               }
+               else {
+               	  s_pSpan.style.color = '#ff3300';
+               }
+               
+               // CRUCIAL: remove the last value from stock_1_100day_price and stock_2_100day_price otherwise it grows unlimited
+               // because the variables are global
+               stock_1_100day_price.pop();
+		       stock_2_100day_price.pop();
+
+	        });
+
+            function getNewStockPair(){
+               var stockPairSelector = document.getElementById('stockPairSelectorId');
+		       var stockPair = stockPairSelector.options[stockPairSelector.selectedIndex].text;
+               var lowerdiv_1Obj = document.getElementById('lowerdiv_1');
+		       lowerdiv_1Obj.innerHTML = 'New Selection: ' + stockPair;
+
+               var xhr = new XMLHttpRequest();
+			   xhr.open('POST','/getstockpair', true);
+			   xhr.setRequestHeader('Content-Type', 'application/json');
+			   xhr.onreadystatechange=function(){
+				  if (xhr.readyState==4 && xhr.status==200){
+				  	 //console.log('response: ' + xhr.responseText );
+                     chartData = JSON.parse(xhr.responseText).chartData;
+                     var objArr_99 = chartData.slice(-99);
+                     // so if the stock are not on the sme panel, i.e. they are not in comparable mode
+                     // we only have 1 dataset rather than 2
+                     for (const idx in chart.dataSets ){
+                        //console.log('chart.dataSets[' + idx + '] ===> ' + JSON.stringify(chart.dataSets[idx]) );
+                        chart.dataSets[idx].dataProvider = chartData;
+                        chart.dataSets[idx].title = stockPair.split('|')[idx];
+                     }
+
+                     chart.validateData();
+
+                     var stock_1_value_div = document.getElementById('stock_1_value_div');
+		             var stock_2_value_div = document.getElementById('stock_2_value_div');
+		             var corr_10_value_div = document.getElementById('corr_10_value_div');
+		             var corr_50_value_div = document.getElementById('corr_50_value_div');
+		             var corr_100_value_div = document.getElementById('corr_100_value_div');
+                     stock_1_value_div.innerHTML = "wait ...";
+		             stock_2_value_div.innerHTML = "wait ...";
+		             corr_10_value_div.innerHTML = "wait ...";
+		             corr_50_value_div.innerHTML = "wait ...";
+		             corr_100_value_div.innerHTML = "wait ...";
+		             for (var i = objArr_99.length - 1; i > -1; i--){
+                        stock_1_100day_price[i] = objArr_99[i].value_1;
+                        stock_2_100day_price[i] = objArr_99[i].value_2;
+		             }
+
+				  }
+
+			   }
+			   var payload = '{"stockPair":"'+stockPair+'"}';
+			   //console.log('payload: ' + payload);
+			   xhr.send( payload );
+			
+            }
+
+		</script>
+
+		<script>
+		function sum_array_elem(argArr){
+			var retVal = 0;
+			for (var i = 0; i < argArr.length; i++){
+				retVal += Number(argArr[i]); // damn' chrome treating elements as strings
+			}
+			return retVal;
+		}
+		// correlation functions
+		function cov_of_2_arrays(val1, val2) { 
+           var new_array = [];
+           for (let i = 0; i < val1.length; i++){
+              new_array[i] = val1[i] * val2[i];
+           }
+           ret_val = sum_array_elem(new_array);
+           return ( ret_val / (new_array.length - 1) );
+        }
+
+        function variance_of_array(val) { 
+           const val_sum = sum_array_elem(val);
+           const val_avg = val_sum/val.length;
+           const pre_variance_array = val.map( function(value) { return ((value - val_avg) * (value - val_avg)) ; } );
+           const variance = ( sum_array_elem(pre_variance_array) / (pre_variance_array.length - 1) );
+           return variance;
+        }
+
+        function pearsonCorr(a, b){
+           const a_sum = sum_array_elem(a);
+           const b_sum = sum_array_elem(b);
+           const a_avg = a_sum / a.length;
+           const b_avg = b_sum / b.length;
+           const a_minus_a_avg = a.map( function(value) { return (value - a_avg); } );
+           const b_minus_b_avg = b.map( function(value) { return (value - b_avg); } );
+           const cov_a_b = cov_of_2_arrays(a_minus_a_avg, b_minus_b_avg);
+           const a_var = variance_of_array(a);
+           const b_var = variance_of_array(b);
+           const a_std_dev = Math.sqrt(a_var);
+           const b_std_dev = Math.sqrt(b_var);
+           return cov_a_b / (a_std_dev * b_std_dev);
+        }
+
+		</script>
+
+		
+	</head>
+	<body style="background-color:#FFFFFF">
+		<div id="topdiv" style="width:100%; height:50px; /*border:solid 1px magenta*/">
+             <a href="https://datastax.com"><img src="./images/datastax_logo.png" alt=""  style="height:50px;width=200px;"></a>
+		</div>
+		<div id="marketPricesdiv" style="width:100%; height:40px; /*border:solid 1px magenta*/">
+             <span style="margin-left:250px;font-size:20px">Dow:</span> 
+             <span id="dj" style="margin-left:5px;margin-right:100px;font-size:20px"> dow price </span>  
+             <span style="font-size:20px">Nasdaq:</span> <span id="nsdq" style="margin-left:5px;margin-right:100px;font-size:20px"> nasdaq price </span> 
+             <span style="font-size:20px">S&P:</span> <span id="s_p" style="margin-left:5px;font-size:20px"> S&P price </span>
+		</div>
+		<div id="stockPairDiv" style="width:75%; height:25px;/*border:solid 1px magenta*/">
+           <span style="margin-left:400px;font-size:20px;font-weight:900"> Stock Correlations </span>
+           <span style="margin-left:30px;">Select Stock Pair:</span> <select id="stockPairSelectorId" onchange=getNewStockPair();>
+           </select>
+		</div>
+		<div id="chartdiv" style="width:75%; height:600px;float:left"></div>
+		<div id="abeamChartDiv" style="margin-left:75% ;width:20%; height:600px; /*border:solid 1px magenta*/;">
+             <div id="stock_1_value_div" style="position:relative; top:20px; left:2%; border: 2px solid #E74C3C;border-radius:5px;width:125px;" >
+             	stock 1
+             </div>
+             <div id="stock_2_value_div" style="position:relative; top:120px; left:2%; border: 2px solid #fac314;border-radius:5px;width:125px;" >
+             	stock 2
+             </div>
+
+             <div id="corr_10_value_div" style="position:relative; top:35%; left:5%; border: 2px solid #7f8da9;border-radius:5px;width:150px;" >
+             	corr_10 value
+             </div>
+             <div id="corr_50_value_div" style="position:relative; top:50%; left:5%; border: 2px solid #7f8da9;border-radius:5px;width:150px;" >
+             	corr_50 value
+             </div>
+             <div id="corr_100_value_div" style="position:relative; top:65%; left:5%; border: 2px solid #7f8da9;border-radius:5px;width:150px;" >
+             	corr_100 value
+             </div>
+		</div>
+		<div id="lowerdiv_1" style="width:100%; height:100px; /*border:solid 1px magenta */"></div>
+	</body>
+
+</html>
