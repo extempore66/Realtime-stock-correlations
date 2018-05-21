@@ -5,8 +5,15 @@ const fs = require('fs');
 const https = require('https');
 const dse = require('dse-driver');
 const distance = dse.types.distance;
+
+// arg 0 is the node, arg 1 is the the_app_file.js, arg 2 is the command line argument
+//process.argv.forEach(function (val, index, array) {
+//  console.log(index + ': ' + val);
+//});
+
+
 const options = {
-   contactPoints: ['127.0.0.1'],
+   contactPoints: [process.argv[2]],
    pooling: {
       coreConnectionsPerHost: { [distance.local]: 20} 
    }
