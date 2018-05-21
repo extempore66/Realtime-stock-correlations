@@ -1,0 +1,2 @@
+sleep 60
+dse spark-submit --executor-memory 1024M --class com.se.DSAppCorrelations ./DS_App_Spark/target/dse-realtime-correlations.jar

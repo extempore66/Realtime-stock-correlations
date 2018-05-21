@@ -1,2 +1,7 @@
 hugo
-nodejs
+ny_time
+install_nodejs
+install_node_dependencies
+start_node_app
+start_spark_job
+
