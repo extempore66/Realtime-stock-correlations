@@ -1,2 +1,10 @@
 sleep 60
-dse spark-submit --executor-memory 1024M --class com.se.DSAppCorrelations ./DS_App_Spark/target/dse-realtime-correlations.jar
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	# MAC OS X
+  dse spark-submit --executor-memory 1024M --class com.se.DSAppCorrelations ./DS_App_Spark/target/dse-realtime-correlations.jar localhost
+fi
+if [[ "$OSTYPE" != "darwin"* ]]; then
+    # rightscale
+  dse spark-submit --executor-memory 1024M --class com.se.DSAppCorrelations ./DS_App_Spark/target/dse-realtime-correlations.jar node0
+fi
+

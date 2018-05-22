@@ -33,8 +33,10 @@ npm install
 sudo pkill -f dsapp.js
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  nohup sudo node dsapp.js node0 &
+	# MAC OS X
+  nohup sudo node dsapp.js localhost &
 fi
 if [[ "$OSTYPE" != "darwin"* ]]; then
-  nohup sudo node dsapp.js localhost &
+	# rightscale
+  nohup sudo node dsapp.js node0 &
 fi
