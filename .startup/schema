@@ -39,5 +39,5 @@ CREATE TABLE finance.daily_stock_prices (
 CREATE TABLE finance.financial_instruments (instrument text, stock_symbols text, primary key (instrument)  );
 
 insert into finance.financial_instruments (instrument, stock_symbols ) values ('unusual_correlations',
-'GM|PIO,C|SUP,DIS|XLI,COKE|ELP,VZ|CPK,AMZN|WCN,F|WOOD,BA|MDT,YUM|WES,MCD|SO,MSFT|ABG,NKE|TGI,ANF|SFLY,VIA|PBJ');
+'GM|PIO,C|SUP,DIS|XLI,COKE|ELP,VZ|CPK,AMZN|WCN,F|WOOD,BA|MDT,YUM|WES,MCD|SO,MSFT|ABG,NKE|TGI,ANF|SFLY,VIA|PBJ');"
 
