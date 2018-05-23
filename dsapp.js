@@ -282,21 +282,19 @@ function getStockHistory(argStock, startEpochTime, endEpochTime) {
                    last_right_curly_bracket_pos = right_curly_bracket_pos;
                    temp_obj = JSON.parse( data.substring(last_left_curly_bracket_pos, (last_right_curly_bracket_pos + 1)) );
 
-                   // Here is wht happens here, historical prices can come back with 2 values for the same date, one for 9:30am
+                   // Here is what happens here, historical prices can come back with 2 values for the same date, one for 9:30am
                    // which is the value at closing time and another value with after hours with different price, volumes, etc
-                   // Solution:we discard the data if the hours and minutes of epoch time is not 9:30 am
+                   // Solution: set hours and minutes and seconds of epoch time to 9:30:00 am
                    // Another thing which happens is there are dividends interspersed with price i.e. objects in the format:
                    // {"amount":0.308645,"date":1515162600,"type":"DIVIDEND","data":0.308645}. These objects result in a price of 0
                    // and must be skipped i.e if temp_obj.type == "DIVIDEND" exists, skip it (or if temp_obj[type] exists)
                    let localDt = new Date(temp_obj.date * 1000);
-                   //if (temp_obj.type){
-                   //   console.log(argStock + ' -> localDt: ' + localDt + ' getHours:' + localDt.getHours() + ' getMinutes: ' + localDt.getMinutes() + 
-                   //    ' temp_obj.type defined: ' + temp_obj.type);
-                   //}
+                   localDt = new Date( localDt.setHours(9, 30, 0) );
                    
-                   if( (localDt.getHours() == 9 && localDt.getMinutes() == 30) && (!temp_obj.type)) { // what the hell will we do if yahoo ever changes that??!!!
+                   // we do not want rows with .type defined - see above comment
+                   if( (!temp_obj.type) { 
                       const insQuery = 'insert into finance.daily_stock_prices (symbol, epoch_seconds , price ) values (?, ?, ?) using ttl ?';
-                      client.execute(insQuery, [ argStock, temp_obj.date, (Math.round(temp_obj.adjclose * 100) / 100), 63504000 ], 
+                      client.execute(insQuery, [ argStock, (localDt.getTime() / 1000), (Math.round(temp_obj.adjclose * 100) / 100), 63504000 ], 
                         { prepare: true } )
                       .catch( function (err) { console.log('Error in insert query catch: ' + err); } );
                       
