@@ -293,7 +293,7 @@ function getStockHistory(argStock, startEpochTime, endEpochTime) {
                    localDt = new Date( localDt.setHours(9, 30, 0) );
                    
                    // we do not want rows with .type defined - see above comment
-                   if( (!temp_obj.type) { 
+                   if (!temp_obj.type) { 
                       const insQuery = 'insert into finance.daily_stock_prices (symbol, epoch_seconds , price ) values (?, ?, ?) using ttl ?';
                       client.execute(insQuery, [ argStock, (localDt.getTime() / 1000), (Math.round(temp_obj.adjclose * 100) / 100), 63504000 ], 
                         { prepare: true } )
