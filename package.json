@@ -8,6 +8,7 @@
     "cluster": "^0.7.7",
     "dse-driver": "^1.5.1",
     "express": "^4.16.3",
+    "moment-timezone": "^0.5.17",
     "os": "^0.1.1",
     "socket.io": "^2.1.0"
   },

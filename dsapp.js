@@ -2,6 +2,7 @@
 const async = require('async');
 const cluster = require('cluster');
 const fs = require('fs');
+const moment = require("moment-timezone");
 const https = require('https');
 const dse = require('dse-driver');
 const distance = dse.types.distance;
@@ -420,7 +421,7 @@ function getStockCurrentPrice(argStock) {
 
 // now get on with setting up stock pairs, etc. This is called periodically in the master - every 2 days after being called once on master startup
 function check_historical_prices(argStockArray) {
-       const date = new Date();
+       const date = new Date( moment.tz("America/New_York") );
        const today_9_30_am = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 9, 30, 0);
        const today_9_30_am_epoch = ((today_9_30_am.getTime()) / 1000); // we want seconds not milliseconds
        const two_years_ago_9_30_am_epoch = ( (new Date( (date.getFullYear() - 2), date.getMonth(), date.getDate(), 9, 30, 0)).getTime() ) / 1000;
@@ -456,7 +457,7 @@ function check_current_prices(argStockArray){
    // for the sake of testing skip the   conditions
    clearInterval(current_prices_interval);
 
-   let localDt = new Date();
+   let localDt = new Date( moment.tz("America/New_York") );
    const today_9_30_am = new Date(localDt.getFullYear(), localDt.getMonth(), localDt.getDate(), 9, 30, 0);
    const today_9_30_am_epoch = today_9_30_am.getTime();
    const today_4_00_pm = new Date(localDt.getFullYear(), localDt.getMonth(), localDt.getDate(), 16, 00, 0);
