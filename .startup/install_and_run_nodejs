@@ -21,7 +21,8 @@ if ! [ -x "$(command -v npm)" ] && ! [ -x "$(command -v node)" ] ; then
  cat <<EOF >> ~/.profile
 # Nodejs
 export NODEJS_HOME=/usr/local/lib/nodejs/node-v"${NODE_VERSION}"/bin
-export PATH=\$NODEJS_HOME:\$PATH
+# export PATH=\$NODEJS_HOME:\$PATH
+export PATH=/$NODEJS_HOME:/$PATH
 EOF
   source ~/.profile
   node -v
