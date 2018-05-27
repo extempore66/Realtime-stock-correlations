@@ -16,13 +16,11 @@ if ! [ -x "$(command -v npm)" ] && ! [ -x "$(command -v node)" ] ; then
  tar -xvf /tmp/node-v"${NODE_VERSION}"-"${DL_SUFFIX}".tar.gz -C /tmp
  sudo mkdir /usr/local/lib/nodejs
  sudo mv /tmp/node-v"${NODE_VERSION}"-"${DL_SUFFIX}" /usr/local/lib/nodejs
- #sudo rm -rf /tmp/node-v"${NODE_VERSION}"-"${DL_SUFFIX}"/*
- cat <<EOF >> ~/.profile
-  # Nodejs
-  export NODEJS_HOME=/usr/local/lib/nodejs/node-v"${NODE_VERSION}"-"${DL_SUFFIX}"/bin
-  # export PATH=\$NODEJS_HOME:\$PATH
-  export PATH=$NODEJS_HOME:$PATH
- EOF
+cat <<EOF>>~/.profile
+# Nodejs
+export NODEJS_HOME=/usr/local/lib/nodejs/node-v"${NODE_VERSION}"-"${DL_SUFFIX}"/bin
+export PATH=$NODEJS_HOME:$PATH
+EOF
  source ~/.profile
  node -v
  npm version
