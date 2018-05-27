@@ -1,20 +1,22 @@
+#!/bin/bash
+
 sleep 60
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	# MAC OS X
 	# add the cron job first then run the job
 	crontab -r
-	(crontab -l ; echo "0 6,23 * * * dse spark-submit --executor-memory 1024M --class com.se.DSAppCorrelations ./DS_App_Spark/target/dse-realtime-correlations.jar localhost") | crontab -
+	(crontab -l ; echo "0 8,20,23 * * * sudo dse spark-submit --executor-memory 1024M --class com.se.DSAppCorrelations ./DS_App_Spark/target/dse-realtime-correlations.jar localhost") | crontab -
     
-    dse spark-submit --executor-memory 1024M --class com.se.DSAppCorrelations ./DS_App_Spark/target/dse-realtime-correlations.jar localhost
+    sudo dse spark-submit --executor-memory 1024M --class com.se.DSAppCorrelations ./DS_App_Spark/target/dse-realtime-correlations.jar localhost
     
 fi
 if [[ "$OSTYPE" != "darwin"* ]]; then
     # rightscale
     # add the cron job first then run the job
     crontab -r
-	(crontab -l ; echo "0 6,23 * * * dse spark-submit --executor-memory 1024M --class com.se.DSAppCorrelations ./DS_App_Spark/target/dse-realtime-correlations.jar node0") | crontab -
+	(crontab -l ; echo "0 8,20,23 * * * sudo dse spark-submit --executor-memory 1024M --class com.se.DSAppCorrelations ./DS_App_Spark/target/dse-realtime-correlations.jar node0") | crontab -
     
-    dse spark-submit --executor-memory 1024M --class com.se.DSAppCorrelations ./DS_App_Spark/target/dse-realtime-correlations.jar node0
+    sudo dse spark-submit --executor-memory 1024M --class com.se.DSAppCorrelations ./DS_App_Spark/target/dse-realtime-correlations.jar node0
    
 fi
 
